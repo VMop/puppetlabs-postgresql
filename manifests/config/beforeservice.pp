@@ -130,7 +130,7 @@ class postgresql::config::beforeservice(
   if(versioncmp($postgresql::params::version, '8.2') >= 0) {
     # Since we're adding an "include" for this extras config file, we need
     # to make sure it exists.
-    exec { "create_postgresql_conf_path":
+    exec { 'create_postgresql_conf_path':
       command => "touch `dirname ${postgresql_conf_path}`/postgresql_puppet_extras.conf",
       path    => '/usr/bin:/bin',
       unless  => "[ -f `dirname ${postgresql_conf_path}`/postgresql_puppet_extras.conf ]"
@@ -139,7 +139,7 @@ class postgresql::config::beforeservice(
     file_line { 'postgresql.conf#include':
       path        => $postgresql_conf_path,
       line        => "include 'postgresql_puppet_extras.conf'",
-      require     => Exec["create_postgresql_conf_path"],
+      require     => Exec['create_postgresql_conf_path'],
       notify      => Service['postgresqld'],
     }
   }
@@ -149,9 +149,9 @@ class postgresql::config::beforeservice(
   # TODO: figure out a way to make this not platform-specific; debian and ubuntu have
   #        an out-of-the-box firewall configuration that seems trickier to manage
   # TODO: get rid of hard-coded port
-  if ($manage_redhat_firewall and $firewall_supported) {
+  if ($manage_redhat_firewall and $::firewall_supported) {
       exec { 'postgresql-persist-firewall':
-        command     => $persist_firewall_command,
+        command     => $::persist_firewall_command,
         refreshonly => true,
       }
 
